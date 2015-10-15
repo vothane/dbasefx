@@ -1,6 +1,6 @@
 defmodule DbasefxTest do
   use ExUnit.Case
-  doctest Table
+  doctest Dbasefx
 
 trajectory_and_movement =
 [
@@ -44,6 +44,8 @@ pitch_outcomes =
 ]
     table = Table.new(["Pitch", "Count", "Ball", "Strike", "Swing", "Foul", "Whiffs", "BIP", "GB", "LD", "FB", "PU", "HR"])
     table = Enum.reduce(pitch_outcomes, table, &Table.insert/2)
+    #assert table == []
+    table = Dbasefx.select(table, ["Pitch"])
     assert table == []
   end
 end
