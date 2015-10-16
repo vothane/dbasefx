@@ -11,5 +11,11 @@ defmodule Dbasefx do
     Enum.reduce(Map.get(table, :rows), result_table, reduce_fn)
   end
 
+  def where(table, predicate) do
+    result_rows =
+      Enum.filter(Map.get(table, :rows),
+        fn(row) -> Enum.any?(row, predicate) end)
+    Table.new(Map.get(table, :columns), result_rows)
+  end
 end
 
