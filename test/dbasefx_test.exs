@@ -46,7 +46,7 @@ pitch_outcomes =
     table = Enum.reduce(pitch_outcomes, table, &Table.insert/2)
     #assert table == []
     table = Dbasefx.select(table, ["Pitch"])
-            |> Dbasefx.where(fn {k, v} -> v == Elixir.Change end)
+            |> Dbasefx.where(fn {k, v} -> {k, v} == {"Pitch", Elixir.Change} end)
     assert Map.get(table, :rows) == [[{"Pitch", Change}]]
   end
 end
