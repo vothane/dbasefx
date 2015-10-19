@@ -17,5 +17,27 @@ defmodule Dbasefx do
         fn(row) -> Enum.any?(row, predicate) end)
     Table.new(Map.get(table, :columns), result_rows)
   end
+
+  def join(table, other_table) do
+    join_cols = Set.intersection(Enum.into(Map.get(table, :columns), HashSet.new),
+                                 Enum.into(Map.get(other_table, :columns), HashSet.new))
+    right_cols = Set.difference(Enum.into(Map.get(other_table, :columns), HashSet.new),
+                                Enum.into(Map.get(table, :columns), HashSet.new))
+    join_table = Table.new(join_cols ++ right_cols)
+    reduce_fn =
+      fn(row, table) ->
+        is_join? =
+          fn(other_row) ->
+            Enum.all?(join_cols, fn(col) -> other_row[col] == row[col] end)
+          end
+        other_rows = Map.get(Dbasefx.where(other_table, is_join?), :rows)
+        Enum.reduce(other_rows, join_table,
+          fn(r, t) ->
+            new_row = row ++ r
+            %{t | :rows => List.insert_at(Map.get(t, :rows), -1, new_row)}
+          end)
+      end
+    Enum.reduce(Map.get(table, :columns), join_table, reduce_fn)
+  end
 end
 

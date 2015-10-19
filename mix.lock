@@ -1,0 +1,2 @@
+%{"floki": {:hex, :floki, "0.6.1"},
+  "mochiweb": {:hex, :mochiweb, "2.12.2"}}
