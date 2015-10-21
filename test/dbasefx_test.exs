@@ -2,6 +2,17 @@ defmodule DbasefxTest do
   use ExUnit.Case
   doctest Dbasefx
 
+  test "table" do
+pitch_outcomes =
+[
+# Pitch Type, Count, Ball %, Strike %, Swing %, Foul %, Whiffs %, BIP %,  GB %, LD %, FB %,  PU%,  HR %
+  [Fourseam,   3669,  31.43,    29.76,   48.60,  21.70,    11.20, 16.27,  6.27, 3.92, 4.80, 1.28, 0.44],
+  [Sinker,      222,  29.73,    31.98,   44.14,  19.82,     9.01, 16.67, 11.71, 2.70, 1.80, 0.45, 0.45],
+  [Change,      764,  34.56,    28.14,   54.45,  15.31,    17.93, 21.73, 12.17, 4.97, 3.14, 1.44, 0.65],
+  [Slider,     1034,  40.43,    27.95,   48.26,  13.83,    17.80, 17.12,  9.57, 2.61, 3.58, 1.35, 0.29],
+  [Curve,       814,  32.06,    38.33,   43.73,  13.15,    14.37, 16.34,  8.48, 3.93, 2.95, 0.98, 0.61]
+]
+
 trajectory_and_movement =
 [
 # Pitch Type,  Count, Freq %, Velo (mph), pfx HMov (in.), pfx VMov (in.), H. Rel (ft.), V. Rel (ft.)
@@ -32,21 +43,16 @@ results_and_averages =
   [Curve,       814, 202,  69,  7,   1,  27,  7,  2,  5, 0.203, 0.332, 0.129, 0.281]
 ]
 
-  test "table" do
-pitch_outcomes =
-[
-# Pitch Type, Count, Ball %, Strike %, Swing %, Foul %, Whiffs %, BIP %,  GB %, LD %, FB %,  PU%,  HR %
-  [Fourseam,   3669,  31.43,    29.76,   48.60,  21.70,    11.20, 16.27,  6.27, 3.92, 4.80, 1.28, 0.44],
-  [Sinker,      222,  29.73,    31.98,   44.14,  19.82,     9.01, 16.67, 11.71, 2.70, 1.80, 0.45, 0.45],
-  [Change,      764,  34.56,    28.14,   54.45,  15.31,    17.93, 21.73, 12.17, 4.97, 3.14, 1.44, 0.65],
-  [Slider,     1034,  40.43,    27.95,   48.26,  13.83,    17.80, 17.12,  9.57, 2.61, 3.58, 1.35, 0.29],
-  [Curve,       814,  32.06,    38.33,   43.73,  13.15,    14.37, 16.34,  8.48, 3.93, 2.95, 0.98, 0.61]
-]
     table = Table.new(["Pitch", "Count", "Ball", "Strike", "Swing", "Foul", "Whiffs", "BIP", "GB", "LD", "FB", "PU", "HR"])
     table = Enum.reduce(pitch_outcomes, table, &Table.insert/2)
-    #assert table == []
+
     table = Dbasefx.select(table, ["Pitch"])
             |> Dbasefx.where(fn {k, v} -> {k, v} == {"Pitch", Elixir.Change} end)
     assert Map.get(table, :rows) == [[{"Pitch", Change}]]
+
+    table2 = Table.new(["Pitch", "Count", "AB", "K", "BB", "HBP",  "1B", "2B", "3B", "HR", "BA", "SLG", "ISO", "BABIP"])
+    table2 = Enum.reduce(results_and_averages, table2, &Table.insert/2)
+    join_table = Dbasefx.join(table, table2)
+    assert join_table == []
   end
 end

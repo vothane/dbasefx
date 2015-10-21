@@ -23,7 +23,7 @@ defmodule Dbasefx do
                                  Enum.into(Map.get(other_table, :columns), HashSet.new))
     right_cols = Set.difference(Enum.into(Map.get(other_table, :columns), HashSet.new),
                                 Enum.into(Map.get(table, :columns), HashSet.new))
-    join_table = Table.new(join_cols ++ right_cols)
+    join_table = Table.new(HashSet.to_list(join_cols) ++ HashSet.to_list(right_cols))
     reduce_fn =
       fn(row, table) ->
         is_join? =
