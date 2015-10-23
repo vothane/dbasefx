@@ -18,16 +18,21 @@ defmodule Dbasefx do
     Table.new(Map.get(table, :columns), result_rows)
   end
 
+  def group_by(table, group_fn) do
+    Enum.group_by(Map.get(table, :rows), group_fn)
+  end
+
   def join(table, other_table) do
-    join_cols = Set.intersection(Enum.into(Map.get(table, :columns), HashSet.new),
-                                 Enum.into(Map.get(other_table, :columns), HashSet.new))
-    right_cols = Set.difference(Enum.into(Map.get(other_table, :columns), HashSet.new),
-                                Enum.into(Map.get(table, :columns), HashSet.new))
-    join_table = Table.new(HashSet.to_list(join_cols) ++ HashSet.to_list(right_cols))
+    join_cols = HashSet.to_list(Set.intersection(Enum.into(Map.get(table, :columns), HashSet.new),
+                                                 Enum.into(Map.get(other_table, :columns), HashSet.new)))
+    right_cols = HashSet.to_list(Set.difference(Enum.into(Map.get(other_table, :columns), HashSet.new),
+                                Enum.into(Map.get(table, :columns), HashSet.new)))
+    join_table = Table.new(join_cols ++ right_cols)
     reduce_fn =
       fn(row, table) ->
         is_join? =
           fn(other_row) ->
+            IO.puts "--------> #{row}"
             Enum.all?(join_cols, fn(col) -> other_row[col] == row[col] end)
           end
         other_rows = Map.get(Dbasefx.where(other_table, is_join?), :rows)
