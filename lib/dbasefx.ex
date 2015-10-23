@@ -22,6 +22,10 @@ defmodule Dbasefx do
     Enum.group_by(Map.get(table, :rows), group_fn)
   end
 
+  def sort_by(table, sort_fn) do
+    Enum.sort_by(Map.get(table, :rows), sort_fn)
+  end
+
   def join(table, other_table) do
     join_cols = HashSet.to_list(Set.intersection(Enum.into(Map.get(table, :columns), HashSet.new),
                                                  Enum.into(Map.get(other_table, :columns), HashSet.new)))
