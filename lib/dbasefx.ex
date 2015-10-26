@@ -35,12 +35,7 @@ defmodule Dbasefx do
     join_table = Table.new(join_cols ++ right_cols)
 
     for row <- Map.get(table, :rows) do
-      is_join? = fn(other_row) ->
-        IO.inspect join_cols
-        IO.inspect row["Pitch"]
-        a = {k, v} = other_row
-        IO.inspect a["Pitch"]
-        Enum.all?(for col <- join_cols, do: Enum.into(other_row, %{})[col] == row[col]) end
+      is_join? = fn(other_row) -> Enum.all?(for col <- join_cols, do: other_row[col] == row[col]) end
       other_rows = Map.get(Dbasefx.where(other_table, is_join?), :rows)
       for other_row <- other_rows do
         new_row = for c <- Map.get(table, :columns), do: row[c] ++ for c <- right_cols, do: other_row[c]

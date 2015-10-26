@@ -68,7 +68,7 @@ defmodule DbasefxTest do
                                    {"1B", 137}, {"2B", 38}, {"3B", 4}, {"HR", 16}, {"BA", 0.24}, {"SLG", 0.355}, {"ISO", 0.116},
                                    {"BABIP", 0.305}]]}
 
-    #join_table = Dbasefx.join(table, table2)
-    #assert join_table == []
+    join_table = Dbasefx.join(table, table2)
+    assert join_table == []
   end
 end
