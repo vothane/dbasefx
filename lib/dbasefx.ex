@@ -21,7 +21,8 @@ defmodule Dbasefx do
   end
 
   def sort_by(table, sort_fn) do
-    Enum.sort_by(Map.get(table, :rows), sort_fn)
+    sorted_rows = Enum.sort_by(Map.get(table, :rows), sort_fn)
+    Table.new(Map.get(table, :columns), sorted_rows)
   end
 
   def join(table, other_table) do

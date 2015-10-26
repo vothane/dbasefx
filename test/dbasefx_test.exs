@@ -68,7 +68,14 @@ defmodule DbasefxTest do
                                    {"1B", 137}, {"2B", 38}, {"3B", 4}, {"HR", 16}, {"BA", 0.24}, {"SLG", 0.355}, {"ISO", 0.116},
                                    {"BABIP", 0.305}]]}
 
-    join_table = Dbasefx.join(table, table2)
-    assert join_table == []
+    sort_table = Dbasefx.sort_by(table2, fn(row) -> row["Count"] end)
+    assert Map.get(sort_table, :rows) == [[{"Pitch", "Sinker"},   {"Count",  222}, {"AB", 50}, {"K", 12}, {"BB", 2}, {"HBP", 0}, {"1B", 8}, {"2B", 0}, {"3B", 0}, {"HR", 1}, {"BA", 0.18}, {"SLG", 0.24}, {"ISO", 0.06}, {"BABIP", 0.216}],
+                                          [{"Pitch", "Change"},   {"Count",  764}, {"AB", 221}, {"K", 54}, {"BB", 7}, {"HBP", 1}, {"1B", 37}, {"2B", 7}, {"3B", 0}, {"HR", 5}, {"BA", 0.222}, {"SLG", 0.321}, {"ISO", 0.1}, {"BABIP", 0.272}],
+                                          [{"Pitch", "Curve"},    {"Count",  814}, {"AB", 202}, {"K", 69}, {"BB", 7}, {"HBP", 1}, {"1B", 27}, {"2B", 7}, {"3B", 2}, {"HR", 5}, {"BA", 0.203}, {"SLG", 0.332}, {"ISO", 0.129}, {"BABIP", 0.281}],
+                                          [{"Pitch", "Slider"},   {"Count", 1034}, {"AB", 274}, {"K", 97}, {"BB", 12}, {"HBP", 2}, {"1B", 35}, {"2B", 6}, {"3B", 2}, {"HR", 3}, {"BA", 0.168}, {"SLG", 0.237}, {"ISO", 0.069}, {"BABIP", 0.247}],
+                                          [{"Pitch", "Fourseam"}, {"Count", 3669}, {"AB", 814}, {"K", 211}, {"BB", 63}, {"HBP", 9}, {"1B", 137}, {"2B", 38}, {"3B", 4}, {"HR", 16}, {"BA", 0.24}, {"SLG", 0.355}, {"ISO", 0.116}, {"BABIP", 0.305}]]
+
+    #join_table = Dbasefx.join(table, table2)
+    #assert join_table == []
   end
 end
