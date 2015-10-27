@@ -33,7 +33,7 @@ defmodule Dbasefx do
                                 Enum.into(Map.get(table, :columns), HashSet.new))
                  |> HashSet.to_list
 
-    join_table = Table.new(join_cols ++ right_cols)
+    {:ok, join_table} = Agent.start_link(fn -> Table.new(Map.get(table, :columns) ++ right_cols) end)
 
     for row <- Map.get(table, :rows) do
       is_join? = fn(other_row) -> Enum.all?(for col <- join_cols, do: other_row[col] == row[col]) end
@@ -41,11 +41,10 @@ defmodule Dbasefx do
       for other_row <- other_rows do
         left = for c <- Map.get(table, :columns), do: row[c]
         right = for c <- right_cols, do: other_row[c]
-        IO.inspect(left ++ right)
-        join_table = %{join_table | :rows => List.insert_at(Map.get(join_table, :rows), -1, left ++ right)}
+        Agent.update(join_table, fn t -> Table.insert(left ++ right, t) end)
       end
     end
-    join_table
+    Agent.get(join_table, fn t -> t end)
   end
 end
 
