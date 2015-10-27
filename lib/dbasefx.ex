@@ -11,7 +11,7 @@ defmodule Dbasefx do
 
   def where(table, predicate) do
     result_rows = Enum.filter(Map.get(table, :rows), predicate)
-    Table.new(Map.get(table, :columns), Map.get(table, :prmary_keys), result_rows)
+    Table.new(Map.get(table, :columns), Map.get(table, :primary_keys), result_rows)
   end
 
   def group_by(table, group_fn) do
