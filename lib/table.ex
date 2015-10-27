@@ -1,6 +1,6 @@
 defmodule Table do
-  def new(columns, rows \\ []) do
-    %{:columns => columns, :rows => rows}
+  def new(columns, primary_keys \\ [], rows \\ []) do
+    %{:columns => columns, :primary_keys => primary_keys, :rows => rows}
   end
 
   def insert(row, table) do

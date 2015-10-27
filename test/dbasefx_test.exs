@@ -43,14 +43,14 @@ defmodule DbasefxTest do
       ["Curve",       814, 202,  69,  7,   1,  27,  7,  2,  5, 0.203, 0.332, 0.129, 0.281]
     ]
 
-    table = Table.new(["Pitch", "_Count", "Ball", "Strike", "Swing", "Foul", "Whiffs", "BIP", "GB", "LD", "FB", "PU", "_HR"])
+    table = Table.new(["Pitch", "Count", "Ball", "Strike", "Swing", "Foul", "Whiffs", "BIP", "GB", "LD", "FB", "PU", "HR"], ["Pitch"])
     table = Enum.reduce(pitch_outcomes, table, &Table.insert/2)
 
     select_table = Dbasefx.select(table, ["Pitch"])
             |> Dbasefx.where(fn(row) -> Enum.any?(row, fn {k, v} -> {k, v} == {"Pitch", "Change"} end) end)
     assert Map.get(select_table, :rows) == [[{"Pitch", "Change"}]]
 
-    table2 = Table.new(["Pitch", "Count", "AB", "K", "BB", "HBP",  "1B", "2B", "3B", "HR", "BA", "SLG", "ISO", "BABIP"])
+    table2 = Table.new(["Pitch", "Count", "AB", "K", "BB", "HBP",  "1B", "2B", "3B", "HR", "BA", "SLG", "ISO", "BABIP"], ["Pitch"])
     table2 = Enum.reduce(results_and_averages, table2, &Table.insert/2)
 
     group_table = Dbasefx.group_by(table2, fn(row) -> String.length(row["Pitch"]) end)
@@ -76,20 +76,15 @@ defmodule DbasefxTest do
                                           [{"Pitch", "Fourseam"}, {"Count", 3669}, {"AB", 814}, {"K", 211}, {"BB", 63}, {"HBP", 9}, {"1B", 137}, {"2B", 38}, {"3B", 4}, {"HR", 16}, {"BA", 0.24}, {"SLG", 0.355}, {"ISO", 0.116}, {"BABIP", 0.305}]]
 
     join_table = Dbasefx.join(table, table2)
-    assert Map.get(join_table, :rows) == [[{"Pitch", "Fourseam"}, {"_Count", 3669}, {"Ball", 31.43}, {"Strike", 29.76}, {"Swing", 48.6}, {"Foul", 21.7}, {"Whiffs", 11.2}, {"BIP", 16.27}, {"GB", 6.27}, {"LD", 3.92}, {"FB", 4.8},
-                                           {"PU", 1.28}, {"_HR", 0.44}, {"3B", 4}, {"BA", 0.24}, {"K", 211}, {"BABIP", 0.305}, {"SLG", 0.355}, {"HR", 16}, {"Count", 3669}, {"AB", 814}, {"BB", 63}, {"1B", 137}, {"HBP", 9},
-                                           {"2B", 38}, {"ISO", 0.116}],
-                                          [{"Pitch", "Sinker"}, {"_Count", 222}, {"Ball", 29.73}, {"Strike", 31.98}, {"Swing", 44.14}, {"Foul", 19.82}, {"Whiffs", 9.01}, {"BIP", 16.67}, {"GB", 11.71}, {"LD", 2.7}, {"FB", 1.8},
-                                           {"PU", 0.45}, {"_HR", 0.45}, {"3B", 0}, {"BA", 0.18}, {"K", 12}, {"BABIP", 0.216}, {"SLG", 0.24}, {"HR", 1}, {"Count", 222}, {"AB", 50}, {"BB", 2}, {"1B", 8}, {"HBP", 0}, {"2B", 0},
-                                           {"ISO", 0.06}],
-                                          [{"Pitch", "Change"}, {"_Count", 764}, {"Ball", 34.56}, {"Strike", 28.14}, {"Swing", 54.45}, {"Foul", 15.31}, {"Whiffs", 17.93}, {"BIP", 21.73}, {"GB", 12.17}, {"LD", 4.97},
-                                           {"FB", 3.14}, {"PU", 1.44}, {"_HR", 0.65}, {"3B", 0}, {"BA", 0.222}, {"K", 54}, {"BABIP", 0.272}, {"SLG", 0.321}, {"HR", 5}, {"Count", 764}, {"AB", 221}, {"BB", 7}, {"1B", 37},
-                                           {"HBP", 1}, {"2B", 7}, {"ISO", 0.1}],
-                                          [{"Pitch", "Slider"}, {"_Count", 1034}, {"Ball", 40.43}, {"Strike", 27.95}, {"Swing", 48.26}, {"Foul", 13.83}, {"Whiffs", 17.8}, {"BIP", 17.12}, {"GB", 9.57}, {"LD", 2.61},
-                                           {"FB", 3.58}, {"PU", 1.35}, {"_HR", 0.29}, {"3B", 2}, {"BA", 0.168}, {"K", 97}, {"BABIP", 0.247}, {"SLG", 0.237}, {"HR", 3}, {"Count", 1034}, {"AB", 274}, {"BB", 12}, {"1B", 35},
-                                           {"HBP", 2}, {"2B", 6}, {"ISO", 0.069}],
-                                          [{"Pitch", "Curve"}, {"_Count", 814}, {"Ball", 32.06}, {"Strike", 38.33}, {"Swing", 43.73}, {"Foul", 13.15}, {"Whiffs", 14.37}, {"BIP", 16.34}, {"GB", 8.48}, {"LD", 3.93}, {"FB", 2.95},
-                                           {"PU", 0.98}, {"_HR", 0.61}, {"3B", 2}, {"BA", 0.203}, {"K", 69}, {"BABIP", 0.281}, {"SLG", 0.332}, {"HR", 5}, {"Count", 814}, {"AB", 202}, {"BB", 7}, {"1B", 27}, {"HBP", 1},
-                                           {"2B", 7}, {"ISO", 0.129}]]
+    assert Map.get(join_table, :rows) == [[{"Pitch", "Fourseam"}, {"Count", 3669}, {"Ball", 31.43}, {"Strike", 29.76}, {"Swing", 48.6}, {"Foul", 21.7}, {"Whiffs", 11.2}, {"BIP", 16.27}, {"GB", 6.27}, {"LD", 3.92}, {"FB", 4.8}, {"PU", 1.28},
+                                           {"HR", 0.44}, {"3B", 4}, {"BA", 0.24}, {"K", 211}, {"BABIP", 0.305}, {"SLG", 0.355}, {"AB", 814}, {"BB", 63}, {"1B", 137}, {"HBP", 9}, {"2B", 38}, {"ISO", 0.116}],
+                                          [{"Pitch", "Sinker"}, {"Count", 222}, {"Ball", 29.73}, {"Strike", 31.98}, {"Swing", 44.14}, {"Foul", 19.82}, {"Whiffs", 9.01}, {"BIP", 16.67}, {"GB", 11.71}, {"LD", 2.7}, {"FB", 1.8}, {"PU", 0.45},
+                                           {"HR", 0.45}, {"3B", 0}, {"BA", 0.18}, {"K", 12}, {"BABIP", 0.216}, {"SLG", 0.24}, {"AB", 50}, {"BB", 2}, {"1B", 8}, {"HBP", 0}, {"2B", 0}, {"ISO", 0.06}],
+                                          [{"Pitch", "Change"}, {"Count", 764}, {"Ball", 34.56}, {"Strike", 28.14}, {"Swing", 54.45}, {"Foul", 15.31}, {"Whiffs", 17.93}, {"BIP", 21.73}, {"GB", 12.17}, {"LD", 4.97}, {"FB", 3.14}, {"PU", 1.44},
+                                           {"HR", 0.65}, {"3B", 0}, {"BA", 0.222}, {"K", 54}, {"BABIP", 0.272}, {"SLG", 0.321}, {"AB", 221}, {"BB", 7}, {"1B", 37}, {"HBP", 1}, {"2B", 7}, {"ISO", 0.1}],
+                                          [{"Pitch", "Slider"}, {"Count", 1034}, {"Ball", 40.43}, {"Strike", 27.95}, {"Swing", 48.26}, {"Foul", 13.83}, {"Whiffs", 17.8}, {"BIP", 17.12}, {"GB", 9.57}, {"LD", 2.61}, {"FB", 3.58}, {"PU", 1.35},
+                                           {"HR", 0.29}, {"3B", 2}, {"BA", 0.168}, {"K", 97}, {"BABIP", 0.247}, {"SLG", 0.237}, {"AB", 274}, {"BB", 12}, {"1B", 35}, {"HBP", 2}, {"2B", 6}, {"ISO", 0.069}],
+                                          [{"Pitch", "Curve"}, {"Count", 814}, {"Ball", 32.06}, {"Strike", 38.33}, {"Swing", 43.73}, {"Foul", 13.15}, {"Whiffs", 14.37}, {"BIP", 16.34}, {"GB", 8.48}, {"LD", 3.93}, {"FB", 2.95}, {"PU", 0.98},
+                                           {"HR", 0.61}, {"3B", 2}, {"BA", 0.203}, {"K", 69}, {"BABIP", 0.281}, {"SLG", 0.332}, {"AB", 202}, {"BB", 7}, {"1B", 27}, {"HBP", 1}, {"2B", 7}, {"ISO", 0.129}]]
   end
 end
