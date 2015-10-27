@@ -43,12 +43,12 @@ defmodule DbasefxTest do
       ["Curve",       814, 202,  69,  7,   1,  27,  7,  2,  5, 0.203, 0.332, 0.129, 0.281]
     ]
 
-    table = Table.new(["Pitch", "Count", "Ball", "Strike", "Swing", "Foul", "Whiffs", "BIP", "GB", "LD", "FB", "PU", "HR"])
+    table = Table.new(["Pitch", "_Count", "Ball", "Strike", "Swing", "Foul", "Whiffs", "BIP", "GB", "LD", "FB", "PU", "_HR"])
     table = Enum.reduce(pitch_outcomes, table, &Table.insert/2)
 
-    table = Dbasefx.select(table, ["Pitch"])
+    select_table = Dbasefx.select(table, ["Pitch"])
             |> Dbasefx.where(fn(row) -> Enum.any?(row, fn {k, v} -> {k, v} == {"Pitch", "Change"} end) end)
-    assert Map.get(table, :rows) == [[{"Pitch", "Change"}]]
+    assert Map.get(select_table, :rows) == [[{"Pitch", "Change"}]]
 
     table2 = Table.new(["Pitch", "Count", "AB", "K", "BB", "HBP",  "1B", "2B", "3B", "HR", "BA", "SLG", "ISO", "BABIP"])
     table2 = Enum.reduce(results_and_averages, table2, &Table.insert/2)
@@ -75,7 +75,7 @@ defmodule DbasefxTest do
                                           [{"Pitch", "Slider"},   {"Count", 1034}, {"AB", 274}, {"K", 97}, {"BB", 12}, {"HBP", 2}, {"1B", 35}, {"2B", 6}, {"3B", 2}, {"HR", 3}, {"BA", 0.168}, {"SLG", 0.237}, {"ISO", 0.069}, {"BABIP", 0.247}],
                                           [{"Pitch", "Fourseam"}, {"Count", 3669}, {"AB", 814}, {"K", 211}, {"BB", 63}, {"HBP", 9}, {"1B", 137}, {"2B", 38}, {"3B", 4}, {"HR", 16}, {"BA", 0.24}, {"SLG", 0.355}, {"ISO", 0.116}, {"BABIP", 0.305}]]
 
-    #join_table = Dbasefx.join(table, table2)
-    #assert join_table == []
+    join_table = Dbasefx.join(table, table2)
+    assert Map.get(join_table, :rows) == [1]
   end
 end

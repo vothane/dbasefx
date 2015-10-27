@@ -39,10 +39,13 @@ defmodule Dbasefx do
       is_join? = fn(other_row) -> Enum.all?(for col <- join_cols, do: other_row[col] == row[col]) end
       other_rows = Map.get(Dbasefx.where(other_table, is_join?), :rows)
       for other_row <- other_rows do
-        new_row = for c <- Map.get(table, :columns), do: row[c] ++ for c <- right_cols, do: other_row[c]
-        %{join_table | :rows => List.insert_at(Map.get(join_table, :rows), -1, new_row)}
+        left = for c <- Map.get(table, :columns), do: row[c]
+        right = for c <- right_cols, do: other_row[c]
+        IO.inspect(left ++ right)
+        join_table = %{join_table | :rows => List.insert_at(Map.get(join_table, :rows), -1, left ++ right)}
       end
     end
+    join_table
   end
 end
 
