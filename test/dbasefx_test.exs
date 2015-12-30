@@ -87,4 +87,11 @@ defmodule DbasefxTest do
                                           [{"Pitch", "Curve"}, {"Count", 814}, {"Ball", 32.06}, {"Strike", 38.33}, {"Swing", 43.73}, {"Foul", 13.15}, {"Whiffs", 14.37}, {"BIP", 16.34}, {"GB", 8.48}, {"LD", 3.93}, {"FB", 2.95}, {"PU", 0.98},
                                            {"HR", 0.61}, {"3B", 2}, {"BA", 0.203}, {"K", 69}, {"BABIP", 0.281}, {"SLG", 0.332}, {"AB", 202}, {"BB", 7}, {"1B", 27}, {"HBP", 1}, {"2B", 7}, {"ISO", 0.129}]]
   end
+
+  test "scrape" do
+    HTTPoison.start
+    {:ok, html} = HTTPoison.get("http://www.brooksbaseball.net/tabs.php?player=506433")
+    res = Floki.find(html.body, "table")
+    assert "" == res
+  end
 end
