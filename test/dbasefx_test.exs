@@ -89,9 +89,7 @@ defmodule DbasefxTest do
   end
 
   test "scrape" do
-    HTTPoison.start
-    {:ok, html} = HTTPoison.get("http://www.brooksbaseball.net/tabs.php?player=506433")
-    res = Floki.find(html.body, "table")
+    res = Webscraper.build_table("http://www.brooksbaseball.net/tabs.php?player=506433")
     assert "" == res
   end
 end

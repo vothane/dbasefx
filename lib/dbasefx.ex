@@ -1,5 +1,6 @@
 defmodule Dbasefx do
   import Table
+  import Webscraper
 
   def select(table, show_columns \\ []) do
     reduce_fn = fn(row, table) ->
