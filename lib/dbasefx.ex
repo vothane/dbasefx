@@ -7,12 +7,12 @@ defmodule Dbasefx do
                   new_row = Enum.filter(row, fn {k, v} -> Enum.member?(show_columns, k) end)
                   %{table | :rows => List.insert_at(Map.get(table, :rows), -1, new_row)}
                 end
-    Enum.reduce(Map.get(table, :rows), Table.new(show_columns, Map.get(table, :primary_keys)), reduce_fn)
+    Enum.reduce(Map.get(table, :rows), Table.new(show_columns, [], Map.get(table, :primary_keys)), reduce_fn)
   end
 
   def where(table, predicate) do
     result_rows = Enum.filter(Map.get(table, :rows), predicate)
-    Table.new(Map.get(table, :columns), Map.get(table, :primary_keys), result_rows)
+    Table.new(Map.get(table, :columns), result_rows, Map.get(table, :primary_keys))
   end
 
   def group_by(table, group_fn) do
@@ -21,7 +21,7 @@ defmodule Dbasefx do
 
   def sort_by(table, sort_fn) do
     sorted_rows = Enum.sort_by(Map.get(table, :rows), sort_fn)
-    Table.new(Map.get(table, :columns), Map.get(table, :primary_keys), sorted_rows)
+    Table.new(Map.get(table, :columns), sorted_rows, Map.get(table, :primary_keys))
   end
 
   def join(table, other_table) do
@@ -33,7 +33,7 @@ defmodule Dbasefx do
                                 Enum.into(Map.get(table, :columns), HashSet.new))
                  |> HashSet.to_list
 
-    {:ok, join_table} = Agent.start_link(fn -> Table.new(Map.get(table, :columns) ++ right_cols, Map.get(table, :primary_keys)) end)
+    {:ok, join_table} = Agent.start_link(fn -> Table.new(Map.get(table, :columns) ++ right_cols, [], Map.get(table, :primary_keys)) end)
 
     for row <- Map.get(table, :rows) do
       is_join? = fn(other_row) -> Enum.all?(for col <- join_cols, do: other_row[col] == row[col]) end

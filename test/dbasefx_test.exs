@@ -43,14 +43,14 @@ defmodule DbasefxTest do
       ["Curve",       814, 202,  69,  7,   1,  27,  7,  2,  5, 0.203, 0.332, 0.129, 0.281]
     ]
 
-    table = Table.new(["Pitch", "Count", "Ball", "Strike", "Swing", "Foul", "Whiffs", "BIP", "GB", "LD", "FB", "PU", "HR"], ["Pitch"])
+    table = Table.new(["Pitch", "Count", "Ball", "Strike", "Swing", "Foul", "Whiffs", "BIP", "GB", "LD", "FB", "PU", "HR"], [], ["Pitch"])
     table = Enum.reduce(pitch_outcomes, table, &Table.insert/2)
 
     select_table = Dbasefx.select(table, ["Pitch"])
             |> Dbasefx.where(fn(row) -> Enum.any?(row, fn {k, v} -> {k, v} == {"Pitch", "Change"} end) end)
     assert Map.get(select_table, :rows) == [[{"Pitch", "Change"}]]
 
-    table2 = Table.new(["Pitch", "Count", "AB", "K", "BB", "HBP",  "1B", "2B", "3B", "HR", "BA", "SLG", "ISO", "BABIP"], ["Pitch"])
+    table2 = Table.new(["Pitch", "Count", "AB", "K", "BB", "HBP",  "1B", "2B", "3B", "HR", "BA", "SLG", "ISO", "BABIP"], [], ["Pitch"])
     table2 = Enum.reduce(results_and_averages, table2, &Table.insert/2)
 
     group_table = Dbasefx.group_by(table2, fn(row) -> String.length(row["Pitch"]) end)
