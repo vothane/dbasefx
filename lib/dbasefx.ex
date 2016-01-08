@@ -4,7 +4,7 @@ defmodule Dbasefx do
 
   def select(table, show_columns \\ []) do
     reduce_fn = fn(row, table) ->
-                  new_row = Enum.filter(row, fn {k, v} -> Enum.member?(show_columns, k) end)
+                  new_row = Enum.filter(row, fn {k, _} -> Enum.member?(show_columns, k) end)
                   %{table | :rows => List.insert_at(Map.get(table, :rows), -1, new_row)}
                 end
     Enum.reduce(Map.get(table, :rows), Table.new(show_columns, [], Map.get(table, :primary_keys)), reduce_fn)

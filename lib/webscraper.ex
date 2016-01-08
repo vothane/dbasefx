@@ -2,10 +2,13 @@ defmodule Webscraper do
   def build_table(url) do
     HTTPoison.start
     {:ok, html} = HTTPoison.get(url)
-    cols = Floki.find(html.body, "thead tr th") |> Enum.map(fn(el) -> Floki.text(el) end)
-    data = Floki.find(html.body, "thead tr td") |> Enum.map(fn(el) -> Floki.text(el) end) |> Enum.chunk(length(cols))
-    rows = Enum.map(data, fn(r) -> Enum.map(r, &clean/1) end)
+    cols = get_elements(html, "thead tr th")
+    rows = get_elements(html, "thead tr td") |> Enum.map(&clean/1) |> Enum.chunk(length(cols))
     Table.new(cols, rows)
+  end
+
+  defp get_elements(html, nav) do
+    Floki.find(html.body, nav) |> Enum.map(fn(el) -> Floki.text(el) end)
   end
 
   defp clean(str) do
