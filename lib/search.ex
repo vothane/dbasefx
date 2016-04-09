@@ -1,6 +1,6 @@
 defmodule Search do 
   use GenServer 
-  import DBasefx
+  import Dbasefx
 
   def init(_) do 
     {:ok, Map.new} 
