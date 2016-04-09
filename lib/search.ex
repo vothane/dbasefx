@@ -7,8 +7,6 @@ defmodule Search do
   end 
 
   def handle_cast({:put, player, url}, state) do 
-    player = "Yu Darvish" # set to one player for now
-    url = http://www.brooksbaseball.net/tabs.php?player=506433
     table = Webscraper.build_table(url)
     {:noreply, Map.put(state, player, table)} 
   end 
