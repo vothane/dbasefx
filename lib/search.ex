@@ -6,9 +6,14 @@ defmodule Search do
     {:ok, Map.new} 
   end 
 
-  def handle_cast({:put, player, url}, state) do 
-    table = Webscraper.build_table(url)
-    {:noreply, Map.put(state, player, table)} 
+  def handle_cast({:put, player, player_url}, state) do 
+    table_map = %{"pitch_usage" => player_url,
+                  "pitch_outcomes" => "#{player_url}&var=po",
+                  "sabermatric_outcomes" => "#{player_url}&var=so"}
+    db = Enum.reduce(table_map, %{}, fn({table_name, url}, m) -> 
+                                       Map.put(m, table_name, Webscraper.build_table(url))
+                                     end  
+    {:noreply, Map.put(state, player, db)} 
   end 
 
   def handle_call({:get, player, query}, _, state) do
