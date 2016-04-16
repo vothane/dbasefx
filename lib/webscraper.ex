@@ -1,10 +1,10 @@
 defmodule Webscraper do
-  def build_table(url) do
+  def build_table(url, primary_keys \\ []) do
     HTTPoison.start
     {:ok, html} = HTTPoison.get(url)
     cols = get_elements(html, "thead tr th")
     rows = get_elements(html, "thead tr td") |> Enum.map(&clean/1) |> Enum.chunk(length(cols))
-    Table.new(cols, rows)
+    Table.new(cols, rows, primary_keys)
   end
 
   defp get_elements(html, nav) do

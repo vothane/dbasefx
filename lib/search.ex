@@ -12,9 +12,10 @@ defmodule Search do
                   :pitch_outcomes => "#{player_url}&var=po",
                   :sabermetric_outcomes => "#{player_url}&var=so",
                   :results_averages => "#{player_url}&var=ra"}
+    primary_keys = ["Pitch Type", "Count"]            
     db = Enum.reduce(table_map, %{}, fn({table_name, url}, m) -> 
-                                       Map.put(m, table_name, Webscraper.build_table(url))
-                                     end  
+                                       Map.put(m, table_name, Webscraper.build_table(url, primary_keys))
+                                     end)  
     {:noreply, Map.put(state, player, db)} 
   end 
 
