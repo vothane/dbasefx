@@ -7,9 +7,11 @@ defmodule Search do
   end 
 
   def handle_cast({:put, player, player_url}, state) do 
-    table_map = %{"pitch_usage" => player_url,
-                  "pitch_outcomes" => "#{player_url}&var=po",
-                  "sabermatric_outcomes" => "#{player_url}&var=so"}
+    table_map = %{:trajectory_movement => player_url,
+                  :pitch_usage => "#{player_url}&var=usage",
+                  :pitch_outcomes => "#{player_url}&var=po",
+                  :sabermetric_outcomes => "#{player_url}&var=so",
+                  :results_averages => "#{player_url}&var=ra"}
     db = Enum.reduce(table_map, %{}, fn({table_name, url}, m) -> 
                                        Map.put(m, table_name, Webscraper.build_table(url))
                                      end  
@@ -17,12 +19,11 @@ defmodule Search do
   end 
 
   def handle_call({:get, player, query}, _, state) do
-    table = Map.get(state, player)
-    query = fn -> Dbasefx.select(table, ["Pitch"])
-                  |> Dbasefx.where(fn(row) -> 
-                                     Enum.any?(row, fn {k, v} -> 
-                                       {k, v} == {"Pitch", "Change"} end) end)
-             end                           
+    %{:trajectory_movement => trajectory_movement,
+      :pitch_usage => pitch_usage,
+      :pitch_outcomes => pitch_outcomes,
+      :sabermetric_outcomes => sabermetric_outcomes,
+      :results_averagee => results_averages} = Map.get(state, player)
     {:reply, query.(), state} 
   end 
 end
