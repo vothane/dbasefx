@@ -14,9 +14,9 @@ defmodule Webscraper do
   defp clean(str) do
     cond do
       String.match?(str, ~r/^-?[0-9]+$/) ->
-        List.first(Tuple.to_list(Integer.parse(str)))
+        Integer.parse(str)
       String.match?(str, ~r/b[0-9]+\.([0-9]+\b)?|\.[0-9]+\b/) ->
-        List.first(Tuple.to_list(Float.parse(str)))
+        Float.parse(str)
       true ->
         str
     end
