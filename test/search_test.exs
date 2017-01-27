@@ -17,11 +17,14 @@ defmodule SearchTest do
      IO.inspect sabermetric_outcomes
      IO.inspect results_averages
 
-     query = Dbasefx.select(trajectory_movement, ["Pitch"])
-          |> Dbasefx.where(fn(row) -> Enum.any?(row, fn {k, v} -> {k, v} == {"Pitch", "Change"} end) end)
+     headers_traj_move = Table.new(trajectory_movement[:columns], [], trajectory_movement[:primary_keys]) 
+     table_traj_move = Enum.reduce(trajectory_movement[:rows], headers_traj_move, &Table.insert/2)
+     query = Dbasefx.select(table_traj_move, ["Pitch Type"])
+          |> Dbasefx.where(fn(row) -> Enum.any?(row, fn {k, v} -> {k, v} == {"Pitch Type", "Change"} end) end)
      
     result = Map.get(query, :rows)
-    assert result == []
+
+    assert result == [[{"Pitch Type", "Change"}]]
     
   end
 end
