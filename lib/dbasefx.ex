@@ -31,13 +31,13 @@ defmodule Dbasefx do
   end
 
   def join(table, other_table) do
-    join_cols = Set.intersection(Enum.into(Map.get(table, :primary_keys), HashSet.new),
-                                 Enum.into(Map.get(other_table, :primary_keys), HashSet.new))
-                |> HashSet.to_list
+    join_cols = MapSet.intersection(Enum.into(Map.get(table, :primary_keys), MapSet.new),
+                                 Enum.into(Map.get(other_table, :primary_keys), MapSet.new))
+                |> MapSet.to_list
 
-    right_cols = Set.difference(Enum.into(Map.get(other_table, :columns), HashSet.new),
-                                Enum.into(Map.get(table, :columns), HashSet.new))
-                 |> HashSet.to_list
+    right_cols = MapSet.difference(Enum.into(Map.get(other_table, :columns), MapSet.new),
+                                Enum.into(Map.get(table, :columns), MapSet.new))
+                 |> MapSet.to_list
 
     {:ok, join_table} = Agent.start_link(fn -> Table.new(Map.get(table, :columns) ++ right_cols, [], Map.get(table, :primary_keys)) end)
 

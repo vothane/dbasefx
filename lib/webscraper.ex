@@ -3,7 +3,6 @@ defmodule Webscraper do
     HTTPoison.start
     {:ok, html} = HTTPoison.get(url)
     cols = get_elements(html, "thead tr th")
-    IO.inspect(get_elements(html, "thead tr td") |> Enum.map(&clean/1))
     rows = get_elements(html, "thead tr td") |> Enum.map(&clean/1) |> Enum.chunk(length(cols))
     Table.new(cols, rows, primary_keys)
   end

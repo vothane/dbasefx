@@ -11,12 +11,15 @@ defmodule SearchTest do
        :pitch_outcomes => pitch_outcomes,
        :sabermetric_outcomes => sabermetric_outcomes,
        :results_averages => results_averages} = GenServer.call(pid, {:get, player, player_url})
-    
-     #IO.inspect GenServer.call(pid, {:get, player, player_url})
+     
+     IO.inspect trajectory_movement
+     IO.inspect pitch_outcomes
+     IO.inspect sabermetric_outcomes
+     IO.inspect results_averages
+
      query = Dbasefx.select(trajectory_movement, ["Pitch"])
           |> Dbasefx.where(fn(row) -> Enum.any?(row, fn {k, v} -> {k, v} == {"Pitch", "Change"} end) end)
      
-    #IO.inspect Dbasefx.select(trajectory_movement, ["Pitch"])
     result = Map.get(query, :rows)
     assert result == []
     
