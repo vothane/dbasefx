@@ -3,6 +3,7 @@ defmodule Webscraper do
     HTTPoison.start
     {:ok, html} = HTTPoison.get(url)
     cols = get_elements(html, "thead tr th")
+    IO.inspect(get_elements(html, "thead tr td") |> Enum.map(&clean/1))
     rows = get_elements(html, "thead tr td") |> Enum.map(&clean/1) |> Enum.chunk(length(cols))
     Table.new(cols, rows, primary_keys)
   end
@@ -12,12 +13,11 @@ defmodule Webscraper do
   end
 
   defp clean(str) do
-    IO.inspect str
     cond do
       String.match?(str, ~r/^-?[0-9]+$/) ->
-        Integer.parse(str)
+        Integer.parse(str) |> Tuple.to_list |> List.first
       String.match?(str, ~r/b[0-9]+\.([0-9]+\b)?|\.[0-9]+\b/) ->
-        Float.parse(str)
+        Float.parse(str) |> Tuple.to_list |> List.first
       true ->
         str
     end
