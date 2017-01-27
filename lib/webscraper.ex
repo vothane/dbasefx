@@ -12,6 +12,7 @@ defmodule Webscraper do
   end
 
   defp clean(str) do
+    IO.inspect str
     cond do
       String.match?(str, ~r/^-?[0-9]+$/) ->
         Integer.parse(str)

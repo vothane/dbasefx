@@ -4,7 +4,7 @@ defmodule Dbasefx.Mixfile do
   def project do
     [app: :dbasefx,
      version: "0.0.1",
-     elixir: "~> 1.1",
+     elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]
@@ -28,8 +28,8 @@ defmodule Dbasefx.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:httpoison, "~> 0.8.0"},
-      {:floki, "~> 0.7"}
+      {:httpoison, "~> 0.10.0"},
+      {:floki, "~> 0.13.1"}
     ]
   end
 end
