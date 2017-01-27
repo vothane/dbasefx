@@ -24,7 +24,7 @@ defmodule SearchTest do
      
     result = Map.get(query, :rows)
 
-    assert result == [[{"Pitch Type", "Change"}]]
+    assert result == [[{"Pitch Type", "Change"}]] # query if David Price has a changeup in repertoire, query indicates TRUE
     
   end
 end
