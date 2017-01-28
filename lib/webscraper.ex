@@ -4,7 +4,8 @@ defmodule Webscraper do
     {:ok, html} = HTTPoison.get(url)
     cols = get_elements(html, "thead tr th")
     rows = get_elements(html, "thead tr td") |> Enum.map(&clean/1) |> Enum.chunk(length(cols))
-    Table.new(cols, rows, primary_keys)
+    table = Table.new(cols, [], primary_keys)
+    Enum.reduce(rows, table, &Table.insert/2)
   end
 
   defp get_elements(html, nav) do
